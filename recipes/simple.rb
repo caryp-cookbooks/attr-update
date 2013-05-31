@@ -36,26 +36,21 @@
 node.default[:my_custom_stuff][:log][:message] = "!!!!set in compile phase!!!!"
 
 # 2) this resource updates the value of the attribute
-#    and fires off a notification to the next resource
 ruby_block "my_custom_stuff" do
-  only_if { node[:my_custom_stuff][:log][:message] == "!!!!set in compile phase!!!!" }
   block do
     # do some stuff...
     # Now save results in node.
     node.set[:my_custom_stuff][:log][:message] = "!!!!set in converge phase!!!!"
   end
-  notifies :create, "ruby_block[update_log_message]", :immediately
 end
 
-# 3) the notify from step #2, causes this resource to lookup log[update_target]
-#    from the resource_collection and updates the message method with the new
-#    attribute value
+# 3) lookup log[update_target] from the resource_collection and
+#    update the message method with the new attribute value
 ruby_block "update_log_message" do
   block do
     log_resource = resources("log[update_target]")
     log_resource.message node[:my_custom_stuff][:log][:message]
   end
-  action :nothing
 end
 
 # 4) this resource *successfully* logs the updated value from step #2

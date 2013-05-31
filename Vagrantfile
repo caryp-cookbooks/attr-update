@@ -80,7 +80,9 @@ Vagrant.configure("2") do |config|
     }
 
     chef.run_list = [
-        "recipe[attr-update::default]"
+      "recipe[attr-update::default]",
+      "recipe[attr-update::simple]",
+      "recipe[attr-update::misconception]"
     ]
   end
 end
